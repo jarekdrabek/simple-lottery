@@ -18,7 +18,14 @@ contract Lottery {
         payable(msg.sender).transfer(address(this).balance);
     }
 
-    function buyCouponAndTryToWin() public payable {
+    modifier isCouponPrice {
+        //Coupon price = 0.001ETH
+        uint256 couponPriceInWei = 1000000000000000;
+        require(couponPriceInWei == msg.value, "You need to pay exactly 0.001ETH for coupon");
+        _;
+    }
+
+    function buyCouponAndTryToWin() public isCouponPrice payable {
         counter++;
         if (isWinningCoupon()) {
             returnTheWinningPool();
