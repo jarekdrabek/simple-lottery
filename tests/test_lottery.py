@@ -20,14 +20,14 @@ def test_buying_coupon_every_third_is_winning():
         {"from": accounts[2], "value": ONE_MILLION_GWEI_IN_WEI}
     )
 
-    account1_balance = accounts[0].balance().to("ether")
-    account2_balance = accounts[1].balance().to("ether")
-    account3_balance = accounts[2].balance().to("ether")
+    account1_balance = accounts[0].balance().to("gwei")
+    account2_balance = accounts[1].balance().to("gwei")
+    account3_balance = accounts[2].balance().to("gwei")
 
     # Assert
-    assert account1_balance == 99
-    assert account2_balance == 99
-    assert account3_balance == 102
+    assert account1_balance == 99999000000
+    assert account2_balance == 99999000000
+    assert account3_balance == 100002000000
 
 
 def test_coupon_for_more_then_one_million_gwei():
