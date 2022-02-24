@@ -2,7 +2,8 @@ import pytest
 from brownie import Lottery, accounts
 from brownie.exceptions import VirtualMachineError
 
-ONE_MILLION_GWEI_IN_WEI = 1000000000000000  # is 0.001ETH
+from scripts.buy_coupon_and_try_to_win import ONE_MILLION_GWEI_IN_WEI
+
 
 def test_buying_coupon_every_third_is_winning():
     # Arrange
