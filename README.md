@@ -32,7 +32,7 @@ brownie test
 ```
 
 ### How to deploy you own version of Lottery:
-Deploying to Rinkeby Ethereum network
+Deploying to Rinkeby Ethereum network.
 Use my Infura project id to deploy to Rinkeby network
 ```
 export WEB3_INFURA_PROJECT_ID=3b60db32abff40358b27faee00f6cc83
