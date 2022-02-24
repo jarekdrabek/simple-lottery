@@ -1,6 +1,13 @@
 # simple-lottery
 Simple lottery blockchain application. This project is working with the Rinkeby Ethereum testnet.
 
+You can buy a lottery coupon for 0.001ETH and try to win. 
+
+if you are not lucky, your money will be added to the winning pool.
+
+If you are lucky you will get the whole collected winning pool.
+After that the lottery start over.
+
 ### Requirements:
 you need to have `Python 3.9` and [brownie](https://eth-brownie.readthedocs.io/en/stable/install.html) installed
 
