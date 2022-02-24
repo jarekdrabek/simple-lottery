@@ -1,12 +1,14 @@
-from brownie import network, accounts, Contract
+from brownie import network, accounts, Contract, config
 
 ONE_MILLION_GWEI_IN_WEI = 1_000_000_000_000_000  # is 0.001ETH
 
+
 def buy_coupon_and_try_to_win():
-    # TODO: make contract and account configurable
     working_network = network.show_active()
-    account = accounts.load("rinkeby-account1")
-    lottery_contract = Contract("0x36b4d64316CDe1D77a895d9a6EE414C5BA8AFF0B")
+    account = accounts.load(config["contract"][working_network]["account_name"])
+    contract_adress = config["contract"][working_network]["address"]
+    lottery_contract = Contract(contract_adress)
+
     transaction_receipt = lottery_contract.buyCouponAndTryToWin(
         {"from": account, "value": ONE_MILLION_GWEI_IN_WEI}
     )

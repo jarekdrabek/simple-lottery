@@ -1,0 +1,4 @@
+contract:
+  rinkeby:
+    account_name: 'rinkeby-account1'
+    address: '0x36b4d64316CDe1D77a895d9a6EE414C5BA8AFF0B'

@@ -10,13 +10,13 @@ def test_buying_coupon_every_third_is_winning():
     testing_contract = Lottery.deploy({"from": accounts[0]})
 
     # Act
-    testing_contract.buy_coupon_and_try_to_win(
+    testing_contract.buyCouponAndTryToWin(
         {"from": accounts[0], "value": ONE_MILLION_GWEI_IN_WEI}
     )
-    testing_contract.buy_coupon_and_try_to_win(
+    testing_contract.buyCouponAndTryToWin(
         {"from": accounts[1], "value": ONE_MILLION_GWEI_IN_WEI}
     )
-    testing_contract.buy_coupon_and_try_to_win(
+    testing_contract.buyCouponAndTryToWin(
         {"from": accounts[2], "value": ONE_MILLION_GWEI_IN_WEI}
     )
 
@@ -36,7 +36,7 @@ def test_coupon_for_more_then_one_million_gwei():
 
     # Act
     with pytest.raises(VirtualMachineError):
-        testing_contract.buy_coupon_and_try_to_win(
+        testing_contract.buyCouponAndTryToWin(
             {"from": accounts[0], "value": ONE_MILLION_GWEI_IN_WEI + 1}
         )
 
@@ -47,6 +47,6 @@ def test_coupon_for_less_then_one_million_gwei():
 
     # Act
     with pytest.raises(VirtualMachineError):
-        testing_contract.buy_coupon_and_try_to_win(
+        testing_contract.buyCouponAndTryToWin(
             {"from": accounts[0], "value": ONE_MILLION_GWEI_IN_WEI - 1}
         )

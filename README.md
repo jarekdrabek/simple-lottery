@@ -31,7 +31,7 @@ Executing tests
 brownie test
 ```
 
-### How to deploy you own version of Lottery:
+### How to deploy you own version of Lottery and take part in it:
 Deploying to Rinkeby Ethereum network.
 Use my Infura project id to deploy to Rinkeby network
 ```
@@ -41,5 +41,20 @@ export WEB3_INFURA_PROJECT_ID=3b60db32abff40358b27faee00f6cc83
 brownie run scripts/deploy.py --network rinkeby
 ```
 
+you should see message similar to following:
 
+> Lottery Contract deployed. Contract address: 0x7D09cE020034AB069EC1723ED4518E4db0Cba1BE
+
+Coppy the contract address and paste in `brownie-config.yaml` file similarly like below
+```
+contract:
+  rinkeby:
+    address: '0x7D09cE020034AB069EC1723ED4518E4db0Cba1BE' 
+```
+
+You can now take part in your own Lottery executing:
+
+```
+brownie run scripts/buy_coupon_and_try_to_win.py --network rinkeby
+```
 
