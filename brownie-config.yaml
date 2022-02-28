@@ -1,7 +1,13 @@
 contract:
   rinkeby:
     account_name: 'rinkeby-account1'
-    address: '0xb75D117c81c896ebe5E0882fe1C5195A4b5A9F51'
+    address: '0x1f061178B9F89c67463228CA3f225F6fb3f9Ba93'
+
+dependencies:
+  - smartcontractkit/chainlink-brownie-contracts@0.4.0
+
 compiler:
-    solc:
-        version: 0.8.7
+  solc:
+    version: 0.8.7
+    remappings:
+      - '@chainlink=smartcontractkit/chainlink-brownie-contracts@0.4.0'
