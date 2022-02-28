@@ -1,4 +1,7 @@
 contract:
   rinkeby:
     account_name: 'rinkeby-account1'
-    address: '0x36b4d64316CDe1D77a895d9a6EE414C5BA8AFF0B'
+    address: '0xb75D117c81c896ebe5E0882fe1C5195A4b5A9F51'
+compiler:
+    solc:
+        version: 0.8.7

@@ -1,20 +1,24 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.6.6 <0.9.0;
+pragma solidity ^0.8.7;
+
 
 contract Lottery {
-    uint256 private counter;
+    address public owner;
+    address payable[] public couponBuyers;
+    address payable public winner;
 
-    constructor() {
-        counter = 0;
-    }
-
-    function isWinningCoupon() private view returns (bool) {
-        return counter % 3 == 0;
+    constructor()  {
+        owner = msg.sender;
     }
 
     function returnTheWinningPool() private {
-        payable(msg.sender).transfer(address(this).balance);
+        winner.transfer(address(this).balance);
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
     }
 
     modifier isCouponPrice() {
@@ -27,10 +31,15 @@ contract Lottery {
         _;
     }
 
-    function buyCouponAndTryToWin() public payable isCouponPrice {
-        counter++;
-        if (isWinningCoupon()) {
-            returnTheWinningPool();
-        }
+    function buyCoupon() public payable isCouponPrice {
+        couponBuyers.push(payable(msg.sender));
+    }
+
+    function finishLottery() public payable onlyOwner {
+        uint256 randomNumber = 17;
+        uint256 indexOfWinner = randomNumber % couponBuyers.length;
+        winner = couponBuyers[indexOfWinner];
+        returnTheWinningPool();
+        couponBuyers = new address payable[](0);
     }
 }
