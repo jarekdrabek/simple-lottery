@@ -11,7 +11,7 @@ def finish_lottery():
         {"from": account}
     )
     print(
-        f"Lottery Finished. The winner will be awarded."
+        f"Lottery Finished. The winner will be awarded soon (it can take several minutes)."
     )
     print(
         f"You can find your transaction on {working_network} network etherscan: https://{working_network}.etherscan.io/tx/{transaction_receipt.txid}"

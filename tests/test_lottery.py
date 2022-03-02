@@ -1,54 +1,100 @@
 import pytest
-from brownie import Lottery, accounts
+from brownie import Lottery, accounts, VRFCoordinatorV2Mock, config, network
 from brownie.exceptions import VirtualMachineError
+from brownie.network.web3 import Web3
 
-from scripts.buy_coupon import ONE_MILLION_GWEI_IN_WEI
 
 
-def test_buying_coupon_every_third_is_winning():
+def test_lottery_workflow():
     # Arrange
-    testing_contract = Lottery.deploy({"from": accounts[0]})
+    lottery_owner_account = accounts[0]
+    first_player_account = accounts[1]
+    second_player_account = accounts[2]
+    third_player_account = accounts[3]
+    lottery_contract, vrf_coordinator = __deploy_and_get_lottery_contract_and_dependencies(lottery_owner_account)
 
+    #Act
+    lottery_contract.buyCoupon({"from": first_player_account, "value": Web3.toWei(0.001, 'ether')})
+    lottery_contract.buyCoupon({"from": second_player_account, "value": Web3.toWei(0.001, 'ether')})
+    lottery_contract.buyCoupon({"from": third_player_account, "value": Web3.toWei(0.001, 'ether')})
+
+    random_result = 4
+    __finish_lottery_with_given_random_result(lottery_contract, lottery_owner_account, vrf_coordinator, random_result)
+
+    #Assert
+    assert lottery_contract.winner() == second_player_account.address
+    assert lottery_contract.balance() == 0
+    assert first_player_account.balance() == Web3.toWei(99.999, 'ether')
+    assert second_player_account.balance() == Web3.toWei(100.002, 'ether')
+    assert third_player_account.balance() == Web3.toWei(99.999, 'ether')
+
+
+def test_deployer_can_finish_lottery():
+    # TODO: to be implemented
+    # Arrange
     # Act
-    testing_contract.buyCoupon(
-        {"from": accounts[0], "value": ONE_MILLION_GWEI_IN_WEI}
-    )
-    testing_contract.buyCoupon(
-        {"from": accounts[1], "value": ONE_MILLION_GWEI_IN_WEI}
-    )
-    testing_contract.buyCoupon(
-        {"from": accounts[2], "value": ONE_MILLION_GWEI_IN_WEI}
-    )
-
-    testing_contract.finishLottery()
-
-    account1_balance = accounts[0].balance().to("gwei")
-    account2_balance = accounts[1].balance().to("gwei")
-    account3_balance = accounts[2].balance().to("gwei")
-
     # Assert
-    assert account1_balance == 99999000000
-    assert account2_balance == 99999000000
-    assert account3_balance == 100002000000
+    pass
+
+
+def test_not_deployer_cannot_finish_lottery():
+    # TODO: to be implemented
+    # Arrange
+    # Act
+    # Assert
+    pass
 
 
 def test_coupon_for_more_then_one_million_gwei():
     # Arrange
-    testing_contract = Lottery.deploy({"from": accounts[0]})
+    deployer_account = accounts[0]
+    testing_contract,_ = __deploy_and_get_lottery_contract_and_dependencies(deployer_account)
 
-    # Act
+
+    # Act and Assert
     with pytest.raises(VirtualMachineError):
         testing_contract.buyCoupon(
-            {"from": accounts[0], "value": ONE_MILLION_GWEI_IN_WEI + 1}
+            {"from": deployer_account, "value": Web3.toWei(0.001, 'ether') + 1}
         )
 
 
 def test_coupon_for_less_then_one_million_gwei():
     # Arrange
-    testing_contract = Lottery.deploy({"from": accounts[0]})
+    deployer_account = accounts[0]
+    testing_contract,_ = __deploy_and_get_lottery_contract_and_dependencies(deployer_account)
 
-    # Act
+    # Act and Assert
     with pytest.raises(VirtualMachineError):
-        testing_contract.buyCoupon(
-            {"from": accounts[0], "value": ONE_MILLION_GWEI_IN_WEI - 1}
-        )
+        testing_contract.buyCoupon({"from": deployer_account, "value": Web3.toWei(0.001, 'ether') - 1})
+
+
+def __deploy_and_get_lottery_contract_and_dependencies(deploying_account):
+    working_network = network.show_active()
+    keyhash = config["contract"][working_network]["dependencies"]["randomness"]["keyhash"]
+    request_confirmations = config["contract"][working_network]["dependencies"]["randomness"]["request_confirmations"]
+
+    vrf_coordinator = VRFCoordinatorV2Mock.deploy(0, 0, {"from": deploying_account})
+    subscription_id = config["contract"][working_network]["dependencies"]["randomness"]\
+        .get("subscription_id", vrf_coordinator.createSubscription().return_value)
+
+    testing_contract = Lottery.deploy(
+        vrf_coordinator,
+        keyhash,
+        request_confirmations,
+        subscription_id,
+        {"from": accounts[0]},
+    )
+    return testing_contract, vrf_coordinator
+
+
+def __finish_lottery_with_given_random_result(lottery_contract, finisher_account, vrf_coordinator, random_result):
+    requestId = __finish_lottery_contract(lottery_contract, finisher_account)
+    vrf_coordinator.fulfillRandomWords(
+        requestId, lottery_contract.address, random_result
+    )
+
+
+def __finish_lottery_contract(testing_contract, account):
+    tx = testing_contract.finishLottery({"from": account})
+    requestId = tx.events["RequestedRandomness"]["requestId"]
+    return requestId

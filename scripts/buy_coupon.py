@@ -1,6 +1,5 @@
 from brownie import network, accounts, Contract, config
-
-ONE_MILLION_GWEI_IN_WEI = 1_000_000_000_000_000  # is 0.001ETH
+from brownie.network.web3 import Web3
 
 
 def buy_coupon():
@@ -10,7 +9,7 @@ def buy_coupon():
     lottery_contract = Contract(contract_adress)
 
     transaction_receipt = lottery_contract.buyCoupon(
-        {"from": account, "value": ONE_MILLION_GWEI_IN_WEI}
+        {"from": account, "value": Web3.toWei(0.001, 'ether')}
     )
     print(
         f"You took part in Lottery."

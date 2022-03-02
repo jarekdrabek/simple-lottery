@@ -3,22 +3,19 @@
 pragma solidity ^0.8.7;
 
 
-import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 
 contract Lottery is VRFConsumerBaseV2 {
     VRFCoordinatorV2Interface COORDINATOR;
-    LinkTokenInterface LINKTOKEN;
     bytes32 keyHash;
-    uint32 callbackGasLimit = 100000;
     uint16 requestConfirmations;
-    uint32 numWords = 2;
     uint64 subscriptionId;
 
-    constructor(address _vrfCoordinator, address _link, bytes32 _keyHash, uint16 _requestConfirmation, uint64 _subscriptionId) VRFConsumerBaseV2(_vrfCoordinator) {
+    event RequestedRandomness(uint256 requestId);
+
+    constructor(address _vrfCoordinator, bytes32 _keyHash, uint16 _requestConfirmation, uint64 _subscriptionId) VRFConsumerBaseV2(_vrfCoordinator) {
         COORDINATOR = VRFCoordinatorV2Interface(_vrfCoordinator);
-        LINKTOKEN = LinkTokenInterface(_link);
         keyHash = _keyHash;
         requestConfirmations = _requestConfirmation;
         subscriptionId = _subscriptionId;
@@ -55,14 +52,16 @@ contract Lottery is VRFConsumerBaseV2 {
     }
 
     function finishLottery() public payable onlyOwner {
-        COORDINATOR.requestRandomWords(
+        uint32 callbackGasLimit = 100000;
+        uint32 numWords = 1;
+        uint256 requestId = COORDINATOR.requestRandomWords(
             keyHash,
             subscriptionId,
             requestConfirmations,
             callbackGasLimit,
             numWords
         );
-
+        emit RequestedRandomness(requestId);
     }
 
     function fulfillRandomWords(uint256, /* requestId */ uint256[] memory randomWords) internal override {
