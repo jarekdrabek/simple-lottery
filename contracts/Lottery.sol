@@ -9,27 +9,20 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 contract Lottery is VRFConsumerBaseV2 {
     VRFCoordinatorV2Interface COORDINATOR;
     bytes32 keyHash;
-    uint16 requestConfirmations;
     uint64 subscriptionId;
-
-    event RequestedRandomness(uint256 requestId);
-
-    constructor(address _vrfCoordinator, bytes32 _keyHash, uint16 _requestConfirmation, uint64 _subscriptionId) VRFConsumerBaseV2(_vrfCoordinator) {
-        COORDINATOR = VRFCoordinatorV2Interface(_vrfCoordinator);
-        keyHash = _keyHash;
-        requestConfirmations = _requestConfirmation;
-        subscriptionId = _subscriptionId;
-        owner = msg.sender;
-    }
 
     address public owner;
     address payable[] public couponBuyers;
     address payable public winner;
     uint256 public randomNumber;
 
+    event RequestedRandomness(uint256 requestId);
 
-    function returnTheWinningPool() private {
-        winner.transfer(address(this).balance);
+    constructor(address _vrfCoordinator, bytes32 _keyHash, uint64 _subscriptionId) VRFConsumerBaseV2(_vrfCoordinator) {
+        COORDINATOR = VRFCoordinatorV2Interface(_vrfCoordinator);
+        keyHash = _keyHash;
+        subscriptionId = _subscriptionId;
+        owner = msg.sender;
     }
 
     modifier onlyOwner() {
@@ -41,8 +34,8 @@ contract Lottery is VRFConsumerBaseV2 {
         //Coupon price = 0.001ETH
         uint256 couponPriceInWei = 1000000000000000;
         require(
-            couponPriceInWei == msg.value,
-            "You need to pay exactly 0.001ETH for coupon"
+        couponPriceInWei == msg.value,
+        "You need to pay exactly 0.001ETH for coupon"
         );
         _;
     }
@@ -52,14 +45,15 @@ contract Lottery is VRFConsumerBaseV2 {
     }
 
     function finishLottery() public payable onlyOwner {
+        uint16 requestConfirmations = 3;
         uint32 callbackGasLimit = 100000;
         uint32 numWords = 1;
         uint256 requestId = COORDINATOR.requestRandomWords(
-            keyHash,
-            subscriptionId,
-            requestConfirmations,
-            callbackGasLimit,
-            numWords
+        keyHash,
+        subscriptionId,
+        requestConfirmations,
+        callbackGasLimit,
+        numWords
         );
         emit RequestedRandomness(requestId);
     }
@@ -70,6 +64,9 @@ contract Lottery is VRFConsumerBaseV2 {
         winner = couponBuyers[indexOfWinner];
         returnTheWinningPool();
         couponBuyers = new address payable[](0);
+    }
 
+    function returnTheWinningPool() private {
+        winner.transfer(address(this).balance);
     }
 }

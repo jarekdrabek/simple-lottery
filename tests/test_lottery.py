@@ -69,32 +69,28 @@ def test_coupon_for_less_then_one_million_gwei():
 
 
 def __deploy_and_get_lottery_contract_and_dependencies(deploying_account):
-    working_network = network.show_active()
-    keyhash = config["contract"][working_network]["dependencies"]["randomness"]["keyhash"]
-    request_confirmations = config["contract"][working_network]["dependencies"]["randomness"]["request_confirmations"]
+    keyhash = '0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc'
 
     vrf_coordinator = VRFCoordinatorV2Mock.deploy(0, 0, {"from": deploying_account})
-    subscription_id = config["contract"][working_network]["dependencies"]["randomness"]\
-        .get("subscription_id", vrf_coordinator.createSubscription().return_value)
+    subscription_id = vrf_coordinator.createSubscription().return_value
 
-    testing_contract = Lottery.deploy(
+    lottery_contract = Lottery.deploy(
         vrf_coordinator,
         keyhash,
-        request_confirmations,
         subscription_id,
         {"from": accounts[0]},
     )
-    return testing_contract, vrf_coordinator
+    return lottery_contract, vrf_coordinator
 
 
 def __finish_lottery_with_given_random_result(lottery_contract, finisher_account, vrf_coordinator, random_result):
-    requestId = __finish_lottery_contract(lottery_contract, finisher_account)
+    request_id = __finish_lottery_contract(lottery_contract, finisher_account)
     vrf_coordinator.fulfillRandomWords(
-        requestId, lottery_contract.address, random_result
+        request_id, lottery_contract.address, random_result
     )
 
 
 def __finish_lottery_contract(testing_contract, account):
     tx = testing_contract.finishLottery({"from": account})
-    requestId = tx.events["RequestedRandomness"]["requestId"]
-    return requestId
+    request_id = tx.events["RequestedRandomness"]["requestId"]
+    return request_id
