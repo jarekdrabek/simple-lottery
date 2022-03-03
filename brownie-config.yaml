@@ -1,7 +1,7 @@
 contract:
   rinkeby:
     account_name: 'rinkeby-account1'
-    address: '0xD6E802834282c8C693b3445683af6d2b1f845EAa'
+    address: '0xA7fEe2a153C32e28914226D1CC9CDa27FA9194a9'
     dependencies:
       randomness:
         vrf_coordinator: '0x6168499c0cFfCaCD319c818142124B7A15E857ab'

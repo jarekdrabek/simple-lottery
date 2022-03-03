@@ -1,12 +1,22 @@
-# simple-lottery
-Simple lottery blockchain application. This project is working with the Rinkeby Ethereum testnet.
+# Simple Lottery
+Simple lottery blockchain application. This project is working with the Rinkeby Ethereum testnet. 
+You can interact with the lottery executing commands in console (see below). 
 
-You can buy a lottery coupon for 0.001ETH and try to win. 
+## How it works
+You can buy a lottery coupon for 0.001ETH.
+The Owner(the address that deployed the lottery) of the lottery can finish it at any time.
+The process of finishing is drowing the winning coupon and sending all the collected money to the address that bought it.
+The more coupons you buy, the bigger chance you have to win.
 
-if you are not lucky, your money will be added to the winning pool.
+## How it works technically
+We collect the addresses that bought the coupon in an **couponBuyers** array. Every purchase is another 
+element in the array.  
 
-If you are lucky you will get the whole collected winning pool.
-After that the lottery start over.
+After the owner of the lottery finish the lottery we use [chainlink VRF v2](https://docs.chain.link/docs/get-a-random-number/) to get a random number. 
+Then this random number is [mod](https://en.wikipedia.org/wiki/Modulo_operation) by the array length. The result is the index of the winner in the **couponBuyers** array.   
+
+
+## Installation and running
 
 ### Requirements:
 you need to have `Python 3.9` and [brownie](https://eth-brownie.readthedocs.io/en/stable/install.html) installed
@@ -27,7 +37,7 @@ brownie accounts new rinkeby-account1
 
 ### How to take part in the current Lottery:
 ```
-brownie run scripts/buy_coupon_and_try_to_win.py --network rinkeby
+brownie run scripts/buy_coupon.py --network rinkeby
 ```
 
 
@@ -50,18 +60,23 @@ brownie run scripts/deploy.py --network rinkeby
 
 you should see message similar to following:
 
-> Lottery Contract deployed. Contract address: 0x7D09cE020034AB069EC1723ED4518E4db0Cba1BE
+> Lottery Contract deployed. Contract address: 0xA7fEe2a153C32e28914226D1CC9CDa27FA9194a9
+> 
+> You can find it on rinkeby network etherscan: https://rinkeby.etherscan.io/address/0xA7fEe2a153C32e28914226D1CC9CDa27FA9194a9
+
 
 Coppy the contract address and paste in `brownie-config.yaml` file similarly like below
 ```
 contract:
   rinkeby:
-    address: '0x7D09cE020034AB069EC1723ED4518E4db0Cba1BE' 
+    address: '0xA7fEe2a153C32e28914226D1CC9CDa27FA9194a9' 
 ```
 
 You can now take part in your own Lottery executing:
 
 ```
-brownie run scripts/buy_coupon_and_try_to_win.py --network rinkeby
+brownie run scripts/buy_coupon.py --network rinkeby
 ```
+
+### How to finish your deployed Lottery and figure out who won:
 
