@@ -29,20 +29,12 @@ def test_lottery_workflow():
     assert third_player_account.balance() == Web3.toWei(99.999, 'ether')
 
 
-def test_deployer_can_finish_lottery():
-    # TODO: to be implemented
-    # Arrange
-    # Act
-    # Assert
-    pass
-
-
-def test_not_deployer_cannot_finish_lottery():
-    # TODO: to be implemented
-    # Arrange
-    # Act
-    # Assert
-    pass
+def test_only_owner_can_finish_lottery():
+    lottery_owner_account = accounts[0]
+    a_player_account = accounts[1]
+    lottery_contract, vrf_coordinator = __deploy_and_get_lottery_contract_and_dependencies(lottery_owner_account)
+    with pytest.raises(VirtualMachineError):
+        __finish_lottery_with_given_random_result(lottery_contract, a_player_account, vrf_coordinator, 4)
 
 
 def test_coupon_for_more_then_one_million_gwei():
