@@ -49,7 +49,7 @@ brownie test
 ```
 
 ### How to deploy you own version of Lottery and take part in it:
-1. In order to use [chainlink VRF v2](https://docs.chain.link/docs/get-a-random-number/)  to first [create and fund a subscription](Create and fund a chainlink subscription).
+1. In order to use [chainlink VRF v2](https://docs.chain.link/docs/get-a-random-number/)  to first [create and fund a chainlink subscription](create and fund a subscription).
 After that you need to change **_subscription_id_** with your value.  
 
     ```
