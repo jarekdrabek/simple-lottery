@@ -7,6 +7,7 @@ from brownie.network.web3 import Web3
 
 def test_lottery_workflow():
     # Arrange
+
     lottery_owner_account = accounts[0]
     first_player_account = accounts[1]
     second_player_account = accounts[2]
@@ -70,7 +71,7 @@ def __deploy_and_get_lottery_contract_and_dependencies(deploying_account):
         vrf_coordinator,
         keyhash,
         subscription_id,
-        {"from": accounts[0]},
+        {"from": deploying_account},
     )
     return lottery_contract, vrf_coordinator
 

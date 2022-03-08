@@ -19,7 +19,7 @@ Then this random number is [mod](https://en.wikipedia.org/wiki/Modulo_operation)
 ## Installation and running
 
 ### Requirements:
-you need to have `Python 3.9` and [brownie](https://eth-brownie.readthedocs.io/en/stable/install.html) installed
+you need to have `Python 3.9` , [brownie](https://eth-brownie.readthedocs.io/en/stable/install.html) and [ganache](https://github.com/trufflesuite/ganache) installed
 
 
 ### Prerequisuites
@@ -27,6 +27,11 @@ you need to have `Python 3.9` and [brownie](https://eth-brownie.readthedocs.io/e
 Installing project dependencies:
 ```
 pip install -r requirements.txt
+```
+
+Use my Infura project id to deploy to Rinkeby network
+```
+export WEB3_INFURA_PROJECT_ID=3b60db32abff40358b27faee00f6cc83
 ```
 
 In order to interact with Rinkeby Ethereum testnet you need to create Rinkeby account 
@@ -63,10 +68,6 @@ After that you need to change **_subscription_id_** with your value.
 
 
 2. Deploying to Rinkeby Ethereum network.
-Use my Infura project id to deploy to Rinkeby network
-    ```
-    export WEB3_INFURA_PROJECT_ID=3b60db32abff40358b27faee00f6cc83
-    ```
     ```
     brownie run scripts/deploy.py --network rinkeby
     ```

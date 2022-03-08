@@ -1,11 +1,11 @@
-from brownie import network, accounts, Contract, config
+from brownie import network, accounts, Contract, config, Lottery
 
 
 def finish_lottery():
     working_network = network.show_active()
     account = accounts.load(config["contract"][working_network]["account_name"])
     contract_adress = config["contract"][working_network]["address"]
-    lottery_contract = Contract(contract_adress)
+    lottery_contract = Contract.from_abi('Lottery', contract_adress, Lottery.abi)
 
     transaction_receipt = lottery_contract.finishLottery(
         {"from": account}

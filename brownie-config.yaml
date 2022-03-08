@@ -9,6 +9,12 @@ contract:
         request_confirmations: 3
         subscription_id: 638
 
+networks:
+  default: development
+  development:
+    cmd_settings:
+      default_balance: 100
+
 dependencies:
   - smartcontractkit/chainlink-brownie-contracts@0.4.0
 

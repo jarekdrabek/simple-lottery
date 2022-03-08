@@ -1,9 +1,9 @@
-from brownie import Contract, network, config
+from brownie import Contract, network, config, Lottery
 
 
 def get_the_winner_address():
-    lottery_contract_adress = config["contract"][network.show_active()]["address"]
-    lottery_contract = Contract(lottery_contract_adress)
+    contract_adress = config["contract"][network.show_active()]["address"]
+    lottery_contract = Contract.from_abi('Lottery', contract_adress, Lottery.abi)
 
     winner_address = lottery_contract.winner()
     print(
